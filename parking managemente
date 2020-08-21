@@ -1,0 +1,1536 @@
+#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <conio.h>
+#include <ctime>
+#include<string.h>  //funcion strcmp
+#include <windows.h>
+using namespace std;
+
+string nombre;   //sede 1, sede 2, sede 3, etc.
+int p=-1,q=-1;
+char due;
+int  tipo;     //cubierto, pavimentado,varias plantas, otros
+string ds_tipo;  //nombre del tipo
+double vmin,vminm;   //valor minuto
+int cmoto;     //cantidad motos
+int ccarro;    //cantidad carros
+int conta_carros=0,conta_motos=0;
+int F,H;   //Contador para ingreso y para historia
+int M,X;
+string splacaa,pyc,pyc1,numero,cstipo,cstipo1;
+int numero1;
+struct tm *tiempo;
+int dia;
+int anterior;
+int ctotal=0;
+char zona;
+
+struct datos{
+ int tipo;                       //tipo vehiculo
+ string ds_tipo;                 //nombre de tipo Carro, Moto
+ char placa[6];                  //numero de placa
+ double cedula;                  // Identificacion cliente
+ char nombre[40];                // Nombre cliente
+ int ubicacion;                  // Ubicación parqueadero
+ time_t fentrada;    //fecha entrada en tipo time
+ char *hentrada;                 // hora salida
+ time_t fsalida;     //fecha entrada en tipo time
+ char *hsalida;                  // hora salida
+ time_t tiempo;     //fecha entrada en tipo time
+ double ttiempo;                 // tiempo total en parqueadero
+ double costo;                   // Costo total
+ double iva;                    // Valor iva
+ string picoyplaca;
+ int estado;
+}cliente[201];
+
+struct datosh{
+ int tipo;                       //tipo vehiculo
+ string ds_tipo;                 //nombre de tipo Carro, Moto
+ string placa;                  //numero de placa
+ string cedula;                  // Identificacion cliente
+ string nombre;                // Nombre cliente
+ int ubicacion;                  // Ubicación parqueadero
+ time_t fentrada;    //fecha entrada en tipo time
+ //char *hentrada;                 // hora salida
+ string hentrada;
+ time_t fsalida;     //fecha entrada en tipo time
+ string hsalida;
+ //char *hsalida;                  // hora salida
+ time_t tiempo;     //fecha entrada en tipo time
+ double ttiempo;                 // tiempo total en parqueadero
+ double costo;                   // Costo total
+ double iva;                    // Valor iva
+ string picoyplaca;}
+clienteh[201];
+
+struct datosm{
+  int tipo;                       //tipo vehiculo
+  string ds_tipo;                 //nombre de tipo Carro, Moto
+  char placa[6];                  //numero de placa
+  double cedula;                  // Identificacion cliente
+  char nombre[40];                // Nombre cliente
+  int ubicacion;                  // Ubicación parqueadero
+  time_t fentrada;    //fecha entrada en tipo time
+  char *hentrada;                 // hora salida
+  time_t fsalida;     //fecha entrada en tipo time
+  char *hsalida;                  // hora salida
+  time_t tiempo;     //fecha entrada en tipo time
+  double ttiempo;                 // tiempo total en parqueadero
+  double costo;                   // Costo total
+  double iva;                    // Valor iva
+  string picoyplaca;
+  int estado;
+ }clientemoto[201];        // tiene pico y placa
+
+struct datoshm{
+ int tipo;                       //tipo vehiculo
+ string ds_tipo;                 //nombre de tipo Carro, Moto
+ string placa;                  //numero de placa
+ string cedula;                  // Identificacion cliente
+ string nombre;                // Nombre cliente
+ int ubicacion;                  // Ubicación parqueadero
+ time_t fentrada;    //fecha entrada en tipo time
+ //char *hentrada;                 // hora salida
+ string hentrada;
+ time_t fsalida;     //fecha entrada en tipo time
+ string hsalida;
+ //char *hsalida;                  // hora salida
+ time_t tiempo;     //fecha entrada en tipo time
+ double ttiempo;                 // tiempo total en parqueadero
+ double costo;                   // Costo total
+ double iva;                    // Valor iva
+ string picoyplaca;
+} clientehmoto[201];
+
+struct entradac{
+  string ds_tipo;
+  string placa;
+  string nombre;
+  string hentrada;
+  int estado;
+} entradacarro[201];
+
+struct entradam{
+  string ds_tipo;
+  string placa;
+  string nombre;
+  string hentrada;
+  int estado;
+}entradamoto[201];
+
+int menu();
+int configurar();
+int ingreso();
+int salida();
+void historico();
+int flujo();
+int visualizar();
+void estado();
+int saber_empleado();
+void leerPasw(char frase[]);
+void welcome();
+char config='N';
+time_t fentrada,fsalida;
+
+int main()
+{
+ system("color 0B");
+ welcome();
+ saber_empleado();
+ menu();
+ return 0;
+}
+
+int menu()
+{
+ char resp;
+ int opciones;
+ system("cls");
+ printf("\n**********************************************************\t ");
+ printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+ printf("\n*                                                        *\t ");
+ printf("\n*                        MENU                            *\t ");
+ printf("\n**********************************************************\t ");
+ printf("\n \n 1: Configurar inicio del sistema.");
+ printf("\n 2: Ingreso de vehiculos.");
+ printf("\n 3: Salida de vehiculos.");
+ printf("\n 4: Historico del dia.");
+ printf("\n 5: Flujo de caja.");
+ printf("\n 6: Estado de parqueaderos.");
+ printf("\n 7: SALIR.");
+ printf("\n");
+ printf("\n**********************************************************\t ");
+ printf("\n \nOpcion: ");
+ scanf("%d",&opciones);
+ do{
+  switch(opciones){
+   case 1:configurar();
+    break;
+   case 2:ingreso();
+    break;
+   case 3:salida();
+    break;
+   case 4:historico();
+    break;
+   case 5:flujo();
+    break;
+   case 6:estado();
+    break;
+   case 7:break;
+  }
+  system("cls");
+  printf("\nDesea volver al menu<s/n> ");
+  scanf("%s",&resp);
+  if((resp=='s')||(resp=='S')){
+   menu();
+  } else {
+   break;
+  }
+ }while(resp=='n');
+ return EXIT_SUCCESS; //Salir del programa sin generar error
+ //return 0;
+}
+
+//******************************************************************************************************
+// Porceso para configuración
+//******************************************************************************************************
+
+int configurar()
+{   system("cls");
+    char config1;
+    int I;
+
+ if(config=='S'){
+  printf("\nLa configuracion ya fue realizada.....\n\n ");
+  printf("\n**********************************************************\t ");
+  printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+  printf("\n*                                                        *\t ");
+  printf("\n*                Resumen Configuracion                   *\t ");
+  printf("\n**********************************************************\t ");
+  printf("\n");
+  cout<<"\n*    Sede:  "<<ds_tipo;
+  cout<<"\n*    valor minuto carro:"<<vmin<< "COP";
+  cout<<"\n     valor minuto moto: "<<vminm<<" COP";
+  cout<<"\n*    Cantidad Motos: "<<cmoto;
+  cout<<"\n*    Cantidad Carros: "<<ccarro;
+  printf("\n**********************************************************\t ");
+  cout<<endl;
+ system("pause");
+  return menu();
+ }
+
+
+ if(due == 'g'){
+ system("cls");
+ printf("\n**********************************************************\t ");
+ printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+ printf("\n*                                                        *\t ");
+ printf("\n*                   Configuracion                        *\t ");
+ printf("\n**********************************************************\t ");
+ do{
+  printf("\n\n\nSede 1: Cubierto <En altura o subterraneo>");
+  printf("\nsede 2: Pavimentado <A nivel, piso en concreto, asfalto o gravilla lavada de rio compactada>");
+  printf("\nsede 3: al aire libre <A nivel, pisos en afirmado o cesped y los asociados a un uso>");
+  printf("\nsede 4: Otros ");
+  printf("\npara salir digite 5\n");
+  printf("\nopcion >> ");
+  printf(">> ");
+  scanf ("%d",&tipo);
+ } while (tipo != 1 && tipo != 2 && tipo != 3 && tipo != 4 && tipo !=5);
+
+ if(tipo == 5){
+ 	return menu();
+ }
+
+  do{
+  system("cls");
+  printf("DIGITE EL FACTOR DE DEMANDA ZONAL: <a>=1 o <b>=0,8 ");
+  printf(">> ");
+  cin>>zona;
+  }while(zona != 'a' && zona != 'b');
+ switch(tipo){
+  case 1:
+   ds_tipo="Cubierto";
+   if(zona == 'a'){
+   vmin = 87;
+   vminm=61;
+   }
+   if(zona == 'b'){
+   	vmin=69;
+   	vminm=49;
+   }
+   break;
+  case 2:
+   ds_tipo="Pavimentado";
+   if(zona== 'a'){
+    vmin=61;
+    vminm=43;
+   }
+   if(zona == 'b'){
+		vmin=49;
+		vminm=34;
+	}
+   break;
+  case 3:
+   ds_tipo="Varias plantas";
+   if(zona == 'a'){
+   vmin=43;
+   vminm=30;
+   }
+   if(zona == 'b'){
+   	vmin=35;
+   	vminm=24;
+   }
+   break;
+  case 4:
+   ds_tipo="Otros";
+   break;
+  default:
+   cout<<"Tipo no identificado"<<endl;
+  }
+
+  nombre=" ";
+  system("cls");
+  printf("\nNombre sede:\t) ");
+  fflush (stdin);
+  scanf ("%s",&nombre);
+     while(p < 10){
+		system("cls");
+		printf("\nCapacidad Motos (Cantidad) >> ");
+		scanf ("%d",&cmoto);
+
+		if(cmoto < 10 ){
+			printf("\n ..::minimo 10 motos::..\n\n");
+			system("pause");
+		}else{
+			p=cmoto;
+		}
+	}
+
+	while(q < 20){
+		system("cls");
+		printf("\ncapacidad carros (cantidad) >> ");
+		scanf("%d",&ccarro);
+			if(ccarro < 20 ){
+			printf("\n ..::minimo 20 carros::..\n\n");
+			system("pause");
+
+			}else{
+				q=ccarro;
+			}
+	}
+
+ conta_carros=0;
+ conta_motos=0;
+ config='S';
+ system("cls");
+ printf("\n**********************************************************\t ");
+ printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+ printf("\n*                                                        *\t ");
+ printf("\n*                Resumen Configuracion                   *\t ");
+ printf("\n**********************************************************\t ");
+ printf("\n");
+ cout<<"\n*    Sede:  "<<ds_tipo;
+ cout<<"\n*    valor minuto carro:"<<vmin<<" COP";
+ cout<<"\n     valor minuto moto: "<<vminm<<" COP";
+ cout<<"\n*    Cantidad Motos: "<<cmoto;
+ cout<<"\n*    Cantidad Carros: "<<ccarro;
+ printf("\n**********************************************************\t ");
+ cout<<endl;
+ printf("\n");
+ //system("pause");
+ //Inicializamos posiciones parqueaderos a cero
+	 for (I=1; I<201; I++){
+	     cliente[I].ubicacion=0;
+	     cliente[I].costo=0;
+	     cliente[I].iva=0;
+	     clientemoto[I].ubicacion=0;
+	     clientemoto[I].costo=0;
+	     clientemoto[I].iva=0;
+	    }
+	}
+
+if(due == 'e'){
+ char ps[40];
+ system("cls");
+ cout<<"CONTRASENA: ";
+ leerPasw(ps);
+  if(strcmp(ps,"nacional")== 0){
+	system("cls");
+    printf("\n**********************************************************\t ");
+	printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+	printf("\n*                                                        *\t ");
+	printf("\n*                   Configuracion                        *\t ");
+	printf("\n**********************************************************\t ");
+	do{
+	  printf("\n\n\nSede 1: Cubierto <En altura o subterraneo>");
+      printf("\nsede 2: Pavimentado <A nivel, piso en concreto, asfalto o gravilla lavada de rio compactada>");
+	  printf("\nsede 3: al aire libre <A nivel, pisos en afirmado o cesped y los asociados a un uso>");
+	  printf("\nsede 4: Otros ");
+	  printf("\npara salir digite 5\n");
+	  printf("\nopcion >> ");
+	  scanf ("%d",&tipo);
+	} while (tipo != 1 && tipo != 2 && tipo != 3 && tipo != 4 && tipo !=5);
+
+   if(tipo == 5){
+	 	return menu();
+	 }
+  do{
+  system("cls");
+  printf("DIGITE EL FACTOR DE DEMANDA ZONAL: <a>=1 o <b>=0,8 ");
+  printf(">> ");
+  cin>>zona;
+  }while(zona != 'a' && zona != 'b' );
+
+ switch(tipo){
+  case 1:
+   ds_tipo="Cubierto";
+   if(zona == 'a'){
+   vmin = 87;
+   vminm=61;
+   }
+   if(zona == 'b'){
+   	vmin=69;
+   	vminm=49;
+   }
+   break;
+  case 2:
+   ds_tipo="Pavimentado";
+    if(zona== 'a'){
+    vmin=61;
+    vminm=43;
+   }
+   if(zona == 'b'){
+		vmin=49;
+		vminm=34;
+	}
+   break;
+  case 3:
+   ds_tipo="Varias plantas";
+    if(zona == 'a'){
+   vmin=43;
+   vminm=30;
+   }
+   if(zona == 'b'){
+   	vmin=35;
+   	vminm=24;
+   }
+   break;
+  case 4:
+   ds_tipo="Otros";
+   break;
+  default:
+   cout<<"Tipo no identificado"<<endl;
+  }
+
+ nombre=" ";
+  system("cls");
+  printf("\nNombre sede:\t) ");
+  fflush (stdin);
+  scanf ("%s",&nombre);
+  //gets (nombre);
+	while(p < 10){
+		system("cls");
+		printf("\nCapacidad Motos (Cantidad) >> ");
+		scanf ("%d",&cmoto);
+
+		if(cmoto < 10 ){
+			printf("\n ..::minimo 10 motos::..\n\n");
+			system("pause");
+		}else{
+			p=cmoto;
+		}
+	}
+
+	while(q < 20){
+		system("cls");
+		printf("\ncapacidad carros (cantidad) >> ");
+		scanf("%d",&ccarro);
+			if(ccarro < 20 ){
+			printf("\n ..::minimo 20 carros::..\n\n");
+			system("pause");
+
+			}else{
+				q=ccarro;
+			}
+	}
+ conta_carros=0;
+ conta_motos=0;
+ config='S';
+ system("cls");
+ printf("\n**********************************************************\t ");
+ printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+ printf("\n*                                                        *\t ");
+ printf("\n*                Resumen Configuracion                   *\t ");
+ printf("\n**********************************************************\t ");
+ printf("\n");
+ cout<<"\n*    Sede:  "<<ds_tipo;
+ cout<<"\n*    valor minuto carro:"<<vmin<<" COP";
+ cout<<"\n     valor minuto moto: "<<vminm<<" COP";
+ cout<<"\n*    Cantidad Motos: "<<cmoto;
+ cout<<"\n*    Cantidad Carros: "<<ccarro;
+ printf("\n**********************************************************\t ");
+ cout<<endl;
+ printf("\n");
+ //Inicializamos posiciones parqueaderos a cero
+	 for (I=1; I<201; I++){
+	     cliente[I].ubicacion=0;
+	     cliente[I].costo=0;
+	     cliente[I].iva=0;
+	     clientemoto[I].ubicacion=0;
+	     clientemoto[I].costo=0;
+	     clientemoto[I].iva=0;
+	    }
+   // system("pause");
+		}else{
+			cout<<"CONTRASENA INVALIDA"<<endl<<endl;
+			system("pause");
+			return configurar();
+		}
+	}
+	//cout<<"ESPERE MIENTRAS SE REGISTRAN ALGUNOS VEHICULOS";
+	int l=0;
+	while(l <= 44){
+        cout<<"E";
+        Sleep(600);
+        l=l+3;
+        cout<<"S";
+        Sleep(600);
+        l=l+3;
+        cout<<"P";
+        Sleep(600);
+        l=l+3;
+        cout<<"E";
+        Sleep(600);
+        l=l+3;
+        cout<<"R";
+        Sleep(600);
+        l++;
+        cout<<"E";
+        l++;
+        cout<<".";
+        Sleep(600);
+        l++;
+        cout<<".";
+        Sleep(600);
+        cout<<".";
+        Sleep(600);
+	}
+	cliente[1].ubicacion=1;
+	cliente[1].estado=1;
+	cliente[1].ds_tipo="carro";
+	cliente[1].tipo=1;
+	fflush(stdin);
+	strcpy(cliente[1].nombre,"oscar");
+	fflush(stdin);
+	strcpy(cliente[1].placa,"rbx043");
+	cliente[1].cedula=12123123;
+	cliente[1].fentrada=time(0);
+	cliente[1].hentrada=asctime(localtime(&cliente[1].fentrada));
+	entradacarro[1].ds_tipo=cliente[1].ds_tipo;
+ 	entradacarro[1].nombre=cliente[1].nombre;
+ 	entradacarro[1].placa=cliente[1].placa;
+ 	entradacarro[1].hentrada=cliente[1].hentrada;
+ 	entradacarro[1].estado=cliente[1].estado;
+ 	Sleep(2000);
+ 	cliente[2].ubicacion=2;
+	cliente[2].estado=1;
+	cliente[2].ds_tipo="carro";
+	cliente[2].tipo=1;
+	fflush(stdin);
+	strcpy(cliente[2].nombre,"carlos");
+	fflush(stdin);
+	strcpy(cliente[2].placa,"rbx044");
+	cliente[2].cedula=12123123;
+	cliente[2].fentrada=time(0);
+	cliente[2].hentrada=asctime(localtime(&cliente[2].fentrada));
+	entradacarro[2].ds_tipo=cliente[2].ds_tipo;
+ 	entradacarro[2].nombre=cliente[2].nombre;
+ 	entradacarro[2].placa=cliente[2].placa;
+ 	entradacarro[2].hentrada=cliente[2].hentrada;
+ 	entradacarro[2].estado=cliente[2].estado;
+ 	Sleep(2000);
+ 	cliente[3].ubicacion=3;
+	cliente[3].estado=1;
+	cliente[3].ds_tipo="carro";
+	cliente[3].tipo=1;
+	fflush(stdin);
+	strcpy(cliente[3].nombre,"pedro");
+	fflush(stdin);
+	strcpy(cliente[3].placa,"rbx045");
+	cliente[3].cedula=12123123;
+	cliente[3].fentrada=time(0);
+	cliente[3].hentrada=asctime(localtime(&cliente[3].fentrada));
+	entradacarro[3].ds_tipo=cliente[3].ds_tipo;
+ 	entradacarro[3].nombre=cliente[3].nombre;
+ 	entradacarro[3].placa=cliente[3].placa;
+ 	entradacarro[3].hentrada=cliente[3].hentrada;
+ 	entradacarro[3].estado=cliente[3].estado;
+ 	Sleep(2000);
+ 	cliente[4].ubicacion=4;
+	cliente[4].estado=1;
+	cliente[4].ds_tipo="carro";
+	cliente[4].tipo=1;
+	fflush(stdin);
+	strcpy(cliente[4].nombre,"juan");
+	fflush(stdin);
+	strcpy(cliente[4].placa,"rbx046");
+	cliente[4].cedula=12123123;
+	cliente[4].fentrada=time(0);
+	cliente[4].hentrada=asctime(localtime(&cliente[4].fentrada));
+	entradacarro[4].ds_tipo=cliente[4].ds_tipo;
+ 	entradacarro[4].nombre=cliente[4].nombre;
+ 	entradacarro[4].placa=cliente[4].placa;
+ 	entradacarro[4].hentrada=cliente[4].hentrada;
+ 	entradacarro[4].estado=cliente[4].estado;
+ 	Sleep(2000);
+ 	///////////////////////////////////////////////////////////////////////////////////////////////////////
+ 	clientemoto[1].ubicacion=1;
+	clientemoto[1].estado=1;
+	clientemoto[1].ds_tipo="moto";
+	clientemoto[1].tipo=2;
+	fflush(stdin);
+	strcpy(clientemoto[1].nombre,"juan");
+	fflush(stdin);
+	strcpy(clientemoto[1].placa,"jl123");
+	clientemoto[1].cedula=12123123;
+	clientemoto[1].fentrada=time(0);
+	clientemoto[1].hentrada=asctime(localtime(&clientemoto[1].fentrada));
+	entradamoto[1].ds_tipo=clientemoto[1].ds_tipo;
+ 	entradamoto[1].nombre=clientemoto[1].nombre;
+ 	entradamoto[1].placa=clientemoto[1].placa;
+ 	entradamoto[1].hentrada=clientemoto[1].hentrada;
+ 	entradamoto[1].estado=clientemoto[1].estado;
+ 	Sleep(2000);
+ 	clientemoto[2].ubicacion=2;
+	clientemoto[2].estado=1;
+	clientemoto[2].ds_tipo="moto";
+	clientemoto[2].tipo=2;
+	fflush(stdin);
+	strcpy(clientemoto[2].nombre,"camilo");
+	fflush(stdin);
+	strcpy(clientemoto[2].placa,"jl456");
+	clientemoto[2].cedula=12123123;
+	clientemoto[2].fentrada=time(0);
+	clientemoto[2].hentrada=asctime(localtime(&clientemoto[2].fentrada));
+	entradamoto[2].ds_tipo=clientemoto[2].ds_tipo;
+ 	entradamoto[2].nombre=clientemoto[2].nombre;
+ 	entradamoto[2].placa=clientemoto[2].placa;
+ 	entradamoto[2].hentrada=clientemoto[2].hentrada;
+ 	entradamoto[2].estado=clientemoto[2].estado;
+	cout<<endl<<endl;
+ 	system("pause");
+    return 0;
+}
+//******************************************************************************************************
+// Porceso para ingreso de vehiculos
+//******************************************************************************************************
+int ingreso(){
+
+ int I,numero1,ctotal,ctipo,ctipo1;
+ char encontrado='N';
+ char opc;
+ if(config=='N'){
+  printf("\n***********Primero se debe configurar la sede*********** \n\n ");
+  system("pause");
+  return 0;
+ }
+
+ do{
+	system("cls");
+	cout<<"....:::::desea ingresar un vehiculo <s/n> :::::....";
+	cout<<" >>  ";
+	cin>>opc;
+	}while(opc != 's' && opc != 'n');
+
+	if(opc =='n'){
+		return menu();
+	}
+
+    ctotal=cmoto+ccarro+1;
+ //Verificar ubicacion disponible
+ for (I=1; I<ccarro; I++){
+     if (cliente[I].ubicacion==0) {
+      F=I;
+      break;
+  }
+    }
+ cliente[F].ubicacion=F;
+
+  int J;
+  for (J=1; J<cmoto; J++){
+     if (clientemoto[J].ubicacion==0){
+      M=J;
+      break;
+  }
+    }
+  clientemoto[M].ubicacion=M;
+ //Verificar cantidad de parqueaderos para motos y carros
+ conta_carros=0;
+ conta_motos=0;
+    for (I=1; I<201; I++){
+     if (cliente[I].tipo==1) {
+      conta_carros=conta_carros+1;
+  }
+     if (clientemoto[I].tipo==2) {
+      conta_motos=conta_motos+1;
+  }
+    }
+
+ system("cls");
+ printf("\n**********************************************************\t ");
+ printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+ printf("\n*                                                        *\t ");
+ printf("\n*                INGRESO DE VEHICULOS                    *\t ");
+ printf("\n**********************************************************\t ");
+ cout<<"\n*    Parqueaderos de Motos libres :         "<<cmoto-conta_motos<<"            *\t";
+ cout<<"\n*    Parqueaderos de Carros libres:         "<<ccarro-conta_carros<<"            *\t";
+ cout<<"\n*    Ubicacion Asignar carro      :         "<<F<<"            *\t";
+ cout<<"\n*    Ubicacion Asignar moto       :         "<<M<<"            *\t";
+ printf("\n**********************************************************\t ");
+ printf("\n");
+ ctipo=cliente[F].tipo;
+ cstipo=cliente[F].ds_tipo;
+ ctipo1=clientemoto[M].tipo;
+ cstipo1=clientemoto[M].ds_tipo;
+ int tp;
+ do{
+  printf("\nTipo Vehiculo: <1>-Carro <2>-Moto \t) ");
+  scanf ("%d",&tp);
+ } while (tp !=1 && tp != 2);
+ switch(tp){
+  case 1:
+   cliente[F].ds_tipo="Carro";
+   cliente[F].tipo=1;
+   break;
+  case 2:
+   cliente[F].ds_tipo="Moto";
+   clientemoto[M].tipo=2;
+   break;
+ }
+
+    //Verificar cantidad de parqueaderos para carros
+    if (cliente[F].tipo==1) {
+    	clientemoto[M].ubicacion=0;
+  if (conta_carros>=ccarro){
+      cout<<"\n ****** Lo lamentamos, no hay disponibilidad para parqueo de carros ******\n";
+      cliente[F].tipo=ctipo;
+      cliente[F].ds_tipo=cstipo;
+      cout<<endl;
+      system("pause");
+      return 0;
+  }
+ }
+ //Verificar cantidad de parqueaderos para motos
+ if (clientemoto[M].tipo==2) {
+ 	cliente[F].ubicacion =0;
+  if (conta_motos>=cmoto){
+      cout<<"\n ****** Lo lamentamos, no hay disponibilidad para parqueo de motos ******\n";
+      clientemoto[M].tipo=ctipo1;
+      clientemoto[M].ds_tipo=cstipo1;
+      cout<<endl;
+      system("pause");
+      return 0;
+  }
+ }
+
+ if(tp == 1){
+  printf("\nNumero de Placa:\t) ");
+  fflush (stdin);
+ //gets (splaca);
+  gets (cliente[F].placa);
+ //Verificar si el carro ya está registrado
+  for (I=0; I<200; I++){
+  if (I!=F){
+  if (strcmp (cliente[F].placa, cliente[I].placa)==0){
+  cout<<"\n*****Placa ya registrada....!, verifique.*****"<<endl<<endl;
+  cliente[F]=cliente[200];
+  system("pause");
+  return 0;
+   }
+  }
+ }
+
+ printf("\nNumero de Cedula:\t) ");
+ //fflush (stdin);
+ scanf ("%d",&cliente[F].cedula);
+
+ printf("\nNombre Cliente:\t) ");
+ fflush (stdin);
+ gets (cliente[F].nombre);
+ //cliente[F].ubicacion=F;
+
+ cliente[F].fentrada=time(NULL);
+ cliente[F].hentrada=asctime(localtime(&cliente[F].fentrada));
+
+ //cout <<"Hora de Ingreso: "<<cliente[F].hentrada;
+ system("cls");
+ printf("\n\n");
+ printf("\n************************************\t ");
+ printf("\n**        RESUMEN INGRESO         **\t ");
+ printf("\n************************************\t ");
+ cout<<"\n*  Tipo Vehiculo: "<<cliente[F].ds_tipo;
+ cout<<"\n*  Placa: "<<cliente[F].placa;
+ printf("\n*  Cedula : %d", cliente[F].cedula);
+ cout<<"\n*  Nombre: "<<cliente[F].nombre;
+ cout<<"\n*  Ubicacion: "<<cliente[F].ubicacion;
+ cout<<"\n*  Ingreso: "<<cliente[F].hentrada;
+ printf("\n************************************\t ");
+ cliente[F].estado=1;
+ entradacarro[F].ds_tipo=cliente[F].ds_tipo;
+ entradacarro[F].nombre=cliente[F].nombre;
+ entradacarro[F].placa=cliente[F].placa;
+ entradacarro[F].hentrada=cliente[F].hentrada;
+ entradacarro[F].estado=cliente[F].estado;
+ cout<<endl;
+ system("pause");
+}
+
+if(tp == 2){
+  printf("\nNumero de Placa:\t) ");
+  fflush (stdin);
+  gets(clientemoto[M].placa);
+ //Verificar si el carro ya está registrado
+  for (I=0; I<200; I++){
+  if (I!=M){
+  if (strcmp (clientemoto[M].placa, clientemoto[I].placa)==0){
+  cout<<"\n*****Placa ya registrada....!, verifique.*****"<<endl<<endl;
+  clientemoto[M]=clientemoto[200];
+  system("pause");
+  return 0;
+   }
+  }
+ }
+
+ printf("\nNumero de Cedula:\t) ");
+ //fflush (stdin);
+ scanf ("%d",&clientemoto[M].cedula);
+
+ printf("\nNombre Cliente:\t) ");
+ fflush (stdin);
+ gets (clientemoto[M].nombre);
+ //cliente[F].ubicacion=F;
+
+ clientemoto[M].fentrada=time(NULL);
+ clientemoto[M].hentrada=asctime(localtime(&clientemoto[M].fentrada));
+
+ //cout <<"Hora de Ingreso: "<<cliente[F].hentrada;
+ system("cls");
+ printf("\n\n");
+ printf("\n************************************\t ");
+ printf("\n**        RESUMEN INGRESO         **\t ");
+ printf("\n************************************\t ");
+ cout<<"\n*  Tipo Vehiculo: "<<clientemoto[M].ds_tipo;
+ cout<<"\n*  Placa: "<<clientemoto[M].placa;
+ printf("\n*  Cedula : %d", clientemoto[M].cedula);
+ cout<<"\n*  Nombre: "<<clientemoto[M].nombre;
+ cout<<"\n*  Ubicacion: "<<clientemoto[M].ubicacion;
+ cout<<"\n*  Ingreso: "<<clientemoto[M].hentrada;
+ cout<<"\n*  Pico y Placa: "<<clientemoto[M].picoyplaca<<" Placa :"<<pyc;
+ clientemoto[M].estado=1;
+ entradamoto[M].ds_tipo=clientemoto[M].ds_tipo;
+ entradamoto[M].nombre=clientemoto[M].nombre;
+ entradamoto[M].placa=clientemoto[M].placa;
+ entradamoto[M].hentrada=clientemoto[M].hentrada;
+ entradamoto[M].estado=clientemoto[M].estado;
+ printf("\n************************************\t ");
+ cout<<endl;
+ system("pause");
+
+}
+ return 0;
+}
+
+//******************************************************************************************************
+// Porceso para SALIDA DE VEHICULOS
+//******************************************************************************************************
+
+int salida()
+{
+ int I;
+ double v_min;
+ char encontrado='N';
+ char splaca[6];
+ double iva=0;
+ char opc;
+ if(config=='N'){
+  printf("\n***********Primero se debe configurar la sede*********** \n\n ");
+  system("pause");
+  return 0;
+ }
+
+	 do{
+		system("cls");
+		cout<<"....:::::desea sacar un vehiculo <s/n> :::::....";
+		cout<<" >>  ";
+		cin>>opc;
+	 }while(opc != 's' && opc != 'n');
+
+
+	if(opc =='n'){
+		return menu();
+	}
+
+ printf("\nSalida - Numero de Placa:\t) ");
+ fflush (stdin);
+ gets (splaca);
+ //Buscar placa
+ for (I=0; I<200; I++){
+  if (strcmp (splaca, cliente[I].placa)==0){
+   H=H+1;
+   F=I;
+   cliente[F].estado=0;
+   entradacarro[F].estado=cliente[F].estado;
+   if (cliente[F].tipo==1) {
+	  int cadena =strlen(cliente[F].placa); //cantidad de caracteres de la placa
+	  cadena=cadena-1;
+	  splacaa=cliente[F].placa;
+	  numero=splacaa.substr(cadena,6);  //capturar el ultimo digito de la placa
+	  numero1=atoi(numero.c_str());  //Pasar de caracter a integer
+	  switch(numero1) {
+	  case 0:
+	   pyc="par";
+	   break;
+	  case 1:
+	   pyc="impar";
+	   break;
+	  case 2:
+	   pyc="par";
+	   break;
+	  case 3:
+	   pyc="impar";
+	   break;
+	  case 4:
+	   pyc="par";
+	   break;
+	  case 5:
+	   pyc="impar";
+	   break;
+	  case 6:
+	   pyc="par";
+	   break;
+	  case 7:
+	   pyc="impar";
+	   break;
+	  case 8:
+	   pyc="par";
+	   break;
+	  case 9:
+	   pyc="impar";
+	   break;
+	  }
+	   time_t fecha_sistema;
+	   time(&fecha_sistema);
+	   tiempo=localtime(&fecha_sistema);
+	   dia=tiempo->tm_mday;
+	   switch(dia) {
+	  case 0:
+	   pyc1="par";
+	   break;
+	  case 1:
+	   pyc1="impar";
+	   break;
+	  case 2:
+	   pyc1="par";
+	   break;
+	  case 3:
+	   pyc1="impar";
+	   break;
+	  case 4:
+	   pyc1="par";
+	   break;
+	  case 5:
+	   pyc1="impar";
+	   break;
+	  case 6:
+	   pyc1="par";
+	   break;
+	  case 7:
+	   pyc1="impar";
+	   break;
+	  case 8:
+	   pyc1="par";
+	   break;
+	  case 9:
+	   pyc1="impar";
+	   break;
+	   case 10:
+	   pyc1="par";
+	   break;
+	   case 11:
+	   pyc1="impar";
+	   break;
+	   case 12:
+	   pyc1="par";
+	   break;
+	   case 13:
+	   pyc1="impar";
+	   break;
+	   case 14:
+	   pyc1="par";
+	   break;
+	   case 15:
+	   pyc1="impar";
+	   break;
+	   case 16:
+	   pyc1="par";
+	   break;
+	   case 17:
+	   pyc1="impar";
+	   break;
+	   case 18:
+	   pyc1="par";
+	   break;
+	   case 19:
+	   pyc1="impar";
+	   break;
+	   case 20:
+	   pyc1="par";
+	   break;
+	   case 21:
+	   pyc1="impar";
+	   break;
+	   case 22:
+	   pyc1="par";
+	   break;
+	   case 23:
+	   pyc1="impar";
+	   break;
+	   case 24:
+	   pyc1="par";
+	   break;
+	   case 25:
+	   pyc1="impar";
+	   break;
+	   case 26:
+	   pyc1="par";
+	   break;
+	   case 27:
+	   pyc1="impar";
+	   break;
+	   case 28:
+	   pyc1="par";
+	   break;
+	   case 29:
+	   pyc1="impar";
+	   break;
+	   case 30:
+	   pyc1="par";
+	   break;
+	   case 31:
+	   pyc1="impar";
+	   break;
+	  }
+	  if (pyc==pyc1){
+	   cliente[F].picoyplaca="Si tiene";
+	  } else {
+	   cliente[F].picoyplaca="No tiene";
+	  }
+ }
+   printf("\n\n");
+   printf("\n************************************\t ");
+   printf("\n**        RESUMEN FACTURA         **\t ");
+   printf("\n************************************\t ");
+   cout<<"\nPlaca : "<<cliente[I].placa;
+   cout<<"\nPico y Placa: "<<cliente[I].picoyplaca;
+   printf ("\nIdentificacion : %d", cliente[I].cedula);
+   printf ("\nNombre : %s", cliente[I].nombre);
+   printf ("\nUbicacion : %d", cliente[I].ubicacion);
+   cout<<endl<<"*Hora Ingreso: "<<cliente[I].hentrada;
+   encontrado='S';
+   cliente[F].hentrada=cliente[I].hentrada;
+   clienteh[H].hentrada=cliente[I].hentrada;
+   cliente[F].fsalida=time(NULL);
+   cliente[F].hsalida=asctime(localtime(&cliente[F].fsalida)); //Captura hora de salida
+   cliente[F].tiempo=difftime(cliente[F].fsalida,cliente[F].fentrada); //Calcula la diferencia entre la hora de salida y entrada
+   cliente[F].ttiempo=difftime(cliente[F].fsalida,cliente[F].fentrada);
+   v_min=vmin/60;  //Pasamos el valor del minuto a valor por segundos
+   cliente[F].costo=cliente[F].ttiempo*v_min;
+   //iva=(cliente[F].costo*16)/100;
+   iva=0;
+   cliente[F].iva=iva;
+   //cout<<endl;
+ // Datos de salida
+   cout<<"\nHora Salida : "<<cliente[F].hsalida;
+   cout<<"\nvalor del min en el parqueadero: "<<vmin;
+   cout<<"\nTiempo Total (segundos) : "<<cliente[F].ttiempo;
+   printf ("\ntotal neto : %f",cliente[F].costo);
+   printf(" COP");
+   printf ("\nIva : %f",iva);
+   printf(" COP");
+   printf ("\nPago total : %f",cliente[F].costo+iva);
+   printf(" COP");
+   printf("\n************************************\t ");
+   printf("\n\n");
+ //Guarda la historia
+
+     clienteh[H].placa=splaca;
+     clienteh[H].ubicacion=cliente[F].ubicacion;
+     clienteh[H].tipo=cliente[F].tipo;
+     clienteh[H].ds_tipo=cliente[F].ds_tipo;
+     clienteh[H].cedula=cliente[F].cedula;
+     clienteh[H].nombre=cliente[F].nombre;
+     clienteh[H].fentrada=cliente[F].fentrada;
+     //clienteh[H].hentrada=cliente[F].hentrada;
+     clienteh[H].fsalida=cliente[F].fsalida;
+     clienteh[H].hsalida=cliente[F].hsalida;
+     clienteh[H].tiempo=cliente[F].tiempo;
+     clienteh[H].ttiempo=cliente[F].ttiempo;
+     clienteh[H].costo=cliente[F].costo;
+     clienteh[H].iva=cliente[F].iva;
+     clienteh[H].picoyplaca=cliente[F].picoyplaca;
+  //Limpiar el arreglo del día para liberar el parqueadero
+  cliente[F]=cliente[200];
+  entradacarro[F]=entradacarro[200];
+  }
+
+   if (strcmp (splaca,clientemoto[I].placa)==0){
+   X=X+1;
+   M=I;
+   clientemoto[M].estado=0;
+   entradamoto[M].estado=clientemoto[M].estado;
+   printf("\n\n");
+   printf("\n************************************\t ");
+   printf("\n**        RESUMEN FACTURA         **\t ");
+   printf("\n************************************\t ");
+   cout<<"\nPlaca : "<<clientemoto[M].placa;
+   cout<<"\nPico y Placa: "<<clientemoto[M].picoyplaca;
+   printf ("\nIdentificacion : %d", clientemoto[M].cedula);
+   printf ("\nNombre : %s", clientemoto[M].nombre);
+   printf ("\nUbicacion : %d", clientemoto[M].ubicacion);
+   cout<<endl<<"*Hora Ingreso: "<<clientemoto[M].hentrada;
+   encontrado='S';
+   clientemoto[M].hentrada=clientemoto[I].hentrada;
+   clientehmoto[X].hentrada=clientemoto[I].hentrada;
+   clientemoto[M].fsalida=time(NULL);
+   clientemoto[M].hsalida=asctime(localtime(&clientemoto[M].fsalida)); //Captura hora de salida
+   clientemoto[M].tiempo=difftime(clientemoto[M].fsalida,clientemoto[M].fentrada); //Calcula la diferencia entre la hora de salida y entrada
+   clientemoto[M].ttiempo=difftime(clientemoto[M].fsalida,clientemoto[M].fentrada);
+   v_min=vminm/60;  //Pasamos el valor del minuto a valor por segundos
+   clientemoto[M].costo=clientemoto[M].ttiempo*v_min;
+   //iva=(clientemoto[M].costo*16)/100;
+   iva=0;
+   clientemoto[M].iva=iva;
+ // Datos de salida
+   cout<<"\nHora Salida : "<<clientemoto[M].hsalida;
+   cout<<"\nTiempo Total (segundos) : "<<clientemoto[M].ttiempo;
+   cout<<"\nvalor del min en el parqueadero: "<<vminm;
+   printf ("\ntotal neto : %f",clientemoto[M].costo);
+   printf(" COP");
+   printf ("\nIva : %f",iva);
+   printf(" COP");
+   printf ("\nPago total : %f",clientemoto[M].costo+iva);
+   printf(" COP");
+   printf("\n************************************\t ");
+   printf("\n\n");
+ //Guarda la historia
+
+     clientehmoto[X].placa=splaca;
+     clientehmoto[X].ubicacion=clientemoto[M].ubicacion;
+     clientehmoto[X].tipo=clientemoto[M].tipo;
+     clientehmoto[X].ds_tipo=clientemoto[M].ds_tipo;
+     clientehmoto[X].cedula=clientemoto[M].cedula;
+     clientehmoto[X].nombre=clientemoto[M].nombre;
+     clientehmoto[X].fentrada=clientemoto[M].fentrada;
+     //clienteh[H].hentrada=cliente[F].hentrada;
+     clientehmoto[X].fsalida=clientemoto[M].fsalida;
+     clientehmoto[X].hsalida=clientemoto[M].hsalida;
+     clientehmoto[X].tiempo=clientemoto[M].tiempo;
+     clientehmoto[X].ttiempo=clientemoto[M].ttiempo;
+     clientehmoto[X].costo=clientemoto[M].costo;
+     clientehmoto[X].iva=clientemoto[M].iva;
+     clientehmoto[X].picoyplaca=clientemoto[M].picoyplaca;
+  //Limpiar el arreglo del día para liberar el parqueadero
+  clientemoto[M]=clientemoto[200];
+  entradamoto[M]=entradamoto[200];
+  }
+}
+ if (encontrado=='N'){
+  printf ("\nNo se ha encontrado el vehiculo\n\n");
+  system("pause");
+  return 0;
+ }
+
+  system("pause");
+}
+
+
+void historico()
+{
+  int I,J;
+ system("cls");
+ printf("\n********************************************************************\t ");
+ printf("\n*                      PARQUEAYA S.A.S.                            *\t ");
+ printf("\n*                                                                  *\t ");
+ printf("\n*                     HISTORICO DEL DIA                            *\t ");
+ printf("\n********************************************************************\t ");
+ cout<<endl;
+ cout<<"======================================================================="<<endl;
+ cout<<"UBIC.   PLACA           NOMBRE     "<<endl;
+    cout<<"======================================================================="<<endl;
+
+    for(I=1 ; I <= ccarro; I++ ){
+    	if(entradacarro[I].estado==1){
+    	   cout<<"============================================================"<<endl;
+    	   cout<<endl<<entradacarro[I].placa<<"   "<<entradacarro[I].nombre<<endl;
+		   cout<<"TIPO VEHI.: "<<entradacarro[I].ds_tipo<<endl;
+		   cout<<"F.ENTRADA : "<<entradacarro[I].hentrada<<endl;
+		   cout<<"============================================================="<<endl;
+		}
+	}
+    cout<<endl;
+    for(J=1 ; J <= cmoto ; J++){
+    	if(entradamoto[J].estado==1){
+    	   cout<<"=============================================================="<<endl;
+           cout<<endl<<entradamoto[J].placa<<"   "<<entradamoto[J].nombre<<endl;
+		   cout<<"TIPO VEHI.: "<<entradamoto[J].ds_tipo<<endl;
+		   cout<<"F.ENTRADA : "<<entradamoto[J].hentrada<<endl;
+		   cout<<"==============================================================="<<endl;
+		}
+	}
+
+    cout<<endl;
+    for (I=1; I<201; I++){
+     if (clienteh[I].tipo>0){
+     	   cout<<"================================================================"<<endl;
+           cout<<endl<<clienteh[I].placa<<"   "<<clienteh[I].nombre<<endl;
+		   cout<<"TIPO VEHI.: "<<clienteh[I].ds_tipo<<endl;
+		   cout<<"F.ENTRADA : "<<clienteh[I].hentrada<<endl;
+		   cout<<"F.SALIDA  : "<<clienteh[I].hsalida<<endl;
+		   cout<<"TIEMPO EN PARQUEADERO    : "<<clienteh[I].ttiempo<<" SEGUNDOS"<<endl;
+		   cout<<"================================================================="<<endl;
+  }
+    }
+    cout<<endl;
+    for (J=1; J<201; J++){
+     if (clientehmoto[J].tipo>0){
+     	   cout<<"================================================================="<<endl;
+           cout<<endl<<"       "<<clientehmoto[J].placa<<"   "<<clientehmoto[J].nombre<<endl;
+		   cout<<"TIPO VEHI.: "<<clientehmoto[J].ds_tipo<<endl;
+		   cout<<"F.ENTRADA : "<<clientehmoto[J].hentrada<<endl;
+		   cout<<"F.SALIDA  : "<<clientehmoto[J].hsalida<<endl;
+		   cout<<"TIEMPO EN PARQUEADERO   : "<<clientehmoto[J].ttiempo<<" SEGUNDOS"<<endl;
+		   cout<<"================================================================="<<endl;
+  }
+    }
+    cout<<endl;
+    system("pause");
+}
+
+void estado()
+{
+  int I;
+  int ctotal;
+  ctotal=cmoto+ccarro+1;
+ system("cls");
+ printf("\n**********************************************************\t ");
+ printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+ printf("\n*                                                        *\t ");
+ printf("\n*                ESTADO PARQUEADEROS                     *\t ");
+ printf("\n**********************************************************\t ");
+ printf("\n");
+ cout<<"\n   SEDE                 :                      "<<ds_tipo<<"   "<<endl;
+ cout<<"   TOTAL PARQUEADEROS   :                           "<<ctotal-1<<"   "<<endl;
+ cout<<"   TOTAL PARQUEADEROS CARROS  :                     "<<ccarro<<"   "<<endl;
+ cout<<"   TOTAL PARQUEADEROS MOTOS   :                     "<<cmoto<<"   "<<endl;
+ cout<<"=========================================================="<<endl;
+ cout<<"UBICACION   ESTADO    PLACA     TIPO      NOMBRE    "<<endl;
+    cout<<"=========================================================="<<endl;
+
+    cout<<"*************************************"<<endl;
+	cout<<"*             CARROS                *"<<endl;
+	cout<<"*************************************"<<endl;
+	cout<<endl;
+
+ 	for (I=1; I<= ccarro; I++){
+		printf("\n");
+		cout<<I;
+		if(cliente[I].tipo > 0){
+			if(cliente[I].tipo == 1){
+			cout<<"         Ocupado   ";
+			cout<<cliente[I].placa<<"      ";
+			cout<<"Carro    ";
+			cout<<cliente[I].nombre;
+			}else{
+					cout<<"         ocupado     ";
+			}
+		}else{
+			cout<<"         Libre     ";
+		}
+	}
+	cout<<endl<<endl;
+	cout<<"*************************************"<<endl;
+	cout<<"*             MOTOS                 *"<<endl;
+	cout<<"*************************************"<<endl;
+	cout<<endl;
+	for(I = 1 ; I <= cmoto ; I ++){
+		cout<<"\n";
+		cout<<I;
+		if(clientemoto[I].tipo > 0){
+			if(clientemoto[I].tipo == 2){
+			cout<<"         Ocupado   ";
+				cout<<clientemoto[I].placa<<"      ";
+				cout<<" Moto  ";
+				cout<<clientemoto[I].nombre;
+			}else{
+				cout<<"         Ocupado   ";
+			}
+		}else{
+				cout<<"         Libre     ";
+			}
+	}
+    printf("\n");
+    system("pause");
+}
+
+int flujo()
+{
+   char opc;
+   system("cls");
+   do{
+	system("cls");
+	cout<<"....:::::desea ver el flujo de caja <s/n> :::::....";
+	cout<<" >>  ";
+	cin>>opc;
+	}while(opc != 's' && opc != 'n');
+
+	if(opc =='n'){
+		return menu();
+	}
+  system("cls");
+  char contra[40];
+  cout<<"CONTRASENA: ";
+  leerPasw(contra);
+  if(strcmp(contra,"nacional")==0){
+  int I;
+  double ttotal=0,ttotal1=0;
+  double tcosto,tcosto1;
+  double tiva=0,tiva1=0;
+  ctotal=cmoto+ccarro+1;
+  tcosto=0,tcosto1=0;
+
+  system("cls");
+  printf("\n**********************************************************\t ");
+  printf("\n*                  PARQUEAYA S.A.S.                      *\t ");
+  printf("\n*                                                        *\t ");
+  printf("\n*                   FLUJO DE CAJA                        *\t ");
+  printf("\n**********************************************************\t ");
+  printf("\n");
+  for (I=1; I<ctotal; I++){
+   if(clienteh[I].tipo==1){
+    tcosto=tcosto+clienteh[I].costo;
+    tiva=tiva+clienteh[I].iva;
+   }
+  }
+
+  for (I=1; I<ctotal; I++){
+   if(clientehmoto[I].tipo ==2){
+    tcosto1=tcosto1+clientehmoto[I].costo;
+    tiva1=tiva1+clientehmoto[I].iva;
+   }
+  }
+
+  printf ("\nTotal Ingresos       : %f",tcosto+tcosto1);
+  printf ("\n");
+  printf ("\nTotal Impuesto (Iva) : %f",tiva+tiva1);
+  printf ("\n");
+  printf ("\nTotal Descuento      : %f",0);
+  printf ("\n");
+  cout<<"*****************************************"<<endl;
+  ttotal=tcosto+tcosto1+tiva+tiva1;
+  printf ("\nTotal Neto           : %f",ttotal);
+  printf("\n");
+
+    system("pause");
+}else{
+	cout<<"\n\nCONTRASENA INVALIDA"<<endl<<endl;
+	system("pause");
+	return flujo();
+}
+
+}
+
+void leerPasw(char frase[]) {
+	 int i=0;
+	     cout.flush();
+		     do{
+		        frase[i] = (unsigned char)getch();
+			        if(frase[i]!=8){
+			             cout <<'*';
+			             i++;
+			         }
+		        else if(i>0){
+			             cout << (char)8 << (char)32 << (char)8;
+			             i--;
+			         }
+		         cout.flush();
+			 }while(frase[i-1]!=13);
+		frase[i-1] = 0;
+	     cout<<endl;
+}
+
+int saber_empleado(){
+	system("cls");
+	char resp;
+	char bn = 'N';
+	int opciones;
+	char usu[50];
+	char con[50]; // EMPLEADO ES -> NACIONAL,,,  PARA EL GERENTE ES -> madrid
+	char bnn;
+
+	if(bnn == 'S'){
+		return 0;
+	}
+
+	cout<<"  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  "<<endl;
+	cout<<"  X                                                  X  "<<endl;
+	cout<<"  X              EMPLEADO -> DIGITE e                X  "<<endl;
+	cout<<"  X              GERENTE  -> DIGITE g                X  "<<endl;
+	cout<<"  X                                                  X  "<<endl;
+	cout<<"  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  "<<endl;
+	cin>>due;
+
+	if(due != 'e' && due != 'g'){
+		cout<<"\nOPCION INVALIDA"<<endl<<endl;
+		system("pause");
+		system("cls");
+		return saber_empleado();
+	}
+
+	char l;
+
+	do{
+		system("cls");
+		cout<<"\nDESEA CONTINUAR? <s/n> ";
+		cin>>l;
+			if(l == 'n'){
+				system("cls");
+				return saber_empleado();
+			}
+	}while(l != 's');
+
+	system("cls");
+
+	while(bn != 'S'){
+		system("cls");
+			if(due == 'e' || due == 'g'){
+				if( bnn != 'S'){
+					cout<<"USUARIO: ";
+					cin>>usu;
+					system("cls");
+				}
+				if(strcmp(usu, "oscar") == 0){
+					bnn= 'S';
+					cout<<"USUARIO: "<<usu<<endl;
+					cout<<"\nCONTRASENA: ";
+					leerPasw(con);
+						if( due == 'e'){
+							if(strcmp(con,"nacional")== 0){
+								cout<<endl;
+								bn = 'S';
+								menu();
+							}else{
+								cout<<"\nCONTRESENA INVALIDA"<<endl<<endl;
+								system("pause");
+							}
+						}
+						if( due == 'g'){
+							if(strcmp(con,"madrid")== 0){
+								cout<<endl;
+								bn = 'S';
+								menu();
+							}else{
+								cout<<"\nCONTRESENA INVALIDA"<<endl<<endl;
+								system("pause");
+							}
+						}
+				}else{
+					if(strcmp(usu, "michael") == 0){
+						bnn= 'S';
+						cout<<"USUARIO: "<<usu<<endl;
+						cout<<"\nCONTRASENA: ";
+						leerPasw(con);
+						if( due == 'e'){
+							if(strcmp(con,"nacional")== 0){
+								cout<<endl;
+								bn = 'S';
+								menu();
+							}else{
+								cout<<"\nCONTRESENA INVALIDA"<<endl<<endl;
+								system("pause");
+							}
+						}
+						if( due == 'g'){
+							if(strcmp(con,"madrid")== 0){
+								cout<<endl;
+								bn = 'S';
+								menu();
+							}else{
+								cout<<"\nCONTRESENA INVALIDA"<<endl<<endl;
+								system("pause");
+							}
+					}
+				}else{
+						if(strcmp(usu, "cristian") == 0){
+						bnn= 'S';
+						cout<<"USUARIO: "<<usu<<endl;
+						cout<<"\nCONTRASENA: ";
+						leerPasw(con);
+						if( due == 'e'){
+							if(strcmp(con,"nacional")== 0){
+								cout<<endl;
+								bn = 'S';
+								menu();
+							}else{
+								cout<<"\nCONTRESENA INVALIDA"<<endl<<endl;
+								system("pause");
+							}
+						}
+						if( due == 'g'){
+
+							if(strcmp(con,"madrid")== 0){
+								cout<<endl;
+								bn = 'S';
+								menu();
+							}else{
+								cout<<"\nCONTRESENA INVALIDA"<<endl<<endl;
+								system("pause");
+
+							}
+						}
+
+					}else{
+						cout<<"..:::!!USUARIO NO REGISTRADO!!:::.."<<endl<<endl;
+						system("pause");
+					}
+				}
+			}
+		}else{
+			cout<<endl;
+			system("pause");
+			system("cls");
+			return saber_empleado();
+		}
+	}
+}
+
+void welcome(){
+	cout<<"====================================================================="<<endl<<endl;
+	cout<<".............BIENVENIDO A LA EMPRESA PARQUEAYA S.A.S................."<<endl;
+	cout<<"====================================================================="<<endl<<endl;
+	int x=0;
+
+    cout<<"ESPERE";
+	while(x <=5){
+        cout<<".";
+        Sleep(500);
+        x++;
+	}
+    cout<<endl<<endl;
+    system("pause");
+
+}
+
+
